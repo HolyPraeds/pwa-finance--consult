@@ -1,0 +1,34 @@
+User-agent: *
+Allow: /
+
+# Основные страницы
+Allow: /index.html
+Allow: /offline.html
+
+# Статические ресурсы
+Allow: /style.css
+Allow: /sw-install.js
+Allow: /analytics.js
+
+# PWA файлы
+Allow: /manifest.json
+Allow: /service-worker.js
+
+# Иконки
+Allow: /icon-*.png
+Allow: /icons/
+
+# Изображения
+Allow: /images/
+
+# Запрещаем служебные файлы
+Disallow: /service-worker.js
+Disallow: /.well-known/
+Disallow: /analytics
+Disallow: /api/
+
+# Карта сайта
+Sitemap: https://ваш-домен.com/sitemap.xml
+
+# Время между запросами (в секундах)
+Crawl-delay: 1

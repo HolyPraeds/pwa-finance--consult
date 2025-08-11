@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оффлайн - Финансовый консультант</title>
+    <meta name="theme-color" content="#1976d2">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            padding: 20px;
+        }
+
+        .offline-container {
+            max-width: 400px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .offline-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+
+        .offline-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .offline-message {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, #fff 0%, #e3f2fd 100%);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #1976d2;
+            margin-bottom: 20px;
+        }
+
+        .contact-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .contact-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        .retry-btn {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+        }
+
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(25, 118, 210, 0.4);
+        }
+
+        .offline-features {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .feature-icon {
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        @media (max-width: 480px) {
+            .offline-container {
+                padding: 30px 20px;
+            }
+            
+            .offline-title {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">📱</div>
+        <h1 class="offline-title">Работа в оффлайн режиме</h1>
+        <p class="offline-message">
+            Приложение работает без подключения к интернету. Вы можете просматривать информацию и использовать контакты для связи.
+        </p>
+
+        <div class="contact-info">
+            <div class="contact-title">Экстренные контакты:</div>
+            <div class="contact-item">
+                <span class="contact-icon">📞</span>
+                <span>+7 (999) 123-45-67</span>
+            </div>
+            <div class="contact-item">
+                <span class="contact-icon">✉️</span>
+                <span>consultant@finance.com</span>
+            </div>
+            <div class="contact-item">
+                <span class="contact-icon">💬</span>
+                <span>WhatsApp: +7 999 123 45 67</span>
+            </div>
+        </div>
+
+        <div class="offline-features">
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span>Просмотр всех услуг и контактов</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span>Звонки и отправка сообщений</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span>Сохраненная информация о консультанте</span>
+            </div>
+        </div>
+
+        <button class="retry-btn" onclick="window.location.reload()">
+            Попробовать снова
+        </button>
+    </div>
+</body>
+</html>
