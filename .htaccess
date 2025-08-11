@@ -1,0 +1,154 @@
+# .htaccess для PWA финансового консультанта
+
+# Включаем переписывание URL
+RewriteEngine On
+
+# Принудительное HTTPS (необходимо для PWA)
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Удаляем www (опционально)
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+# Кеширование статических ресурсов
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # HTML файлы (кешируем на час)
+    ExpiresByType text/html "access plus 1 hour"
+    
+    # CSS и JS файлы
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType text/javascript "access plus 1 year"
+    
+    # Изображения
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    
+    # PWA файлы
+    ExpiresByType application/manifest+json "access plus 1 week"
+    
+    # Service Worker (не кешируем для обновлений)
+    <Files "service-worker.js">
+        ExpiresByType application/javascript "access plus 0 seconds"
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+    </Files>
+</IfModule>
+
+# Заголовки кеширования
+<IfModule mod_headers.c>
+    # Общие заголовки безопасности
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Content Security Policy для безопасности
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://images.unsplash.com; font-src 'self'; connect-src 'self' https://www.google-analytics.com;"
+    
+    # PWA заголовки
+    <Files "manifest.json">
+        Header set Content-Type "application/manifest+json"
+        Header set Access-Control-Allow-Origin "*"
+    </Files>
+    
+    # Service Worker заголовки
+    <Files "service-worker.js">
+        Header set Content-Type "application/javascript"
+        Header set Service-Worker-Allowed "/"
+    </Files>
+    
+    # Кеширование CSS и JS с версионированием
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    
+    # Изображения
+    <FilesMatch "\.(png|jpg|jpeg|gif|svg|webp)$">
+        Header set Cache-Control "public, max-age=31536000"
+    </FilesMatch>
+</IfModule>
+
+# GZIP сжатие для лучшей производительности
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/manifest+json
+</IfModule>
+
+# Перенаправления для SEO
+Redirect 301 /home.html /
+Redirect 301 /main.html /
+
+# Обработка ошибок
+ErrorDocument 404 /offline.html
+ErrorDocument 500 /offline.html
+ErrorDocument 503 /offline.html
+
+# Защита служебных файлов
+<Files ".htaccess">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<Files "*.log">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Блокировка вредоносных запросов
+RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2}) [OR]
+RewriteCond %{QUERY_STRING} proc/self/environ [OR]
+RewriteCond %{QUERY_STRING} mosConfig_[a-zA-Z_]{1,21}(=|\%3D) [OR]
+RewriteCond %{QUERY_STRING} base64_(en|de)code\(.*\) [OR]
+RewriteCond %{QUERY_STRING} (<|%3C)([^s]*s)+cript.*(>|%3E) [NC,OR]
+RewriteCond %{QUERY_STRING} (\<|%3C).*iframe.*(\>|%3E) [NC]
+RewriteRule .* - [F]
+
+# Оптимизация для мобильных устройств
+<IfModule mod_setenvif.c>
+    SetEnvIfNoCase User-Agent "Mobile|Android|iPhone|iPad|iPod|BlackBerry|Windows Phone" mobile
+</IfModule>
+
+# Добавляем заголовки для PWA
+<IfModule mod_headers.c>
+    # Заголовки для улучшения PWA
+    Header always set X-UA-Compatible "IE=edge"
+    Header always set Vary "User-Agent"
+    
+    # Предзагрузка критических ресурсов
+    <Files "index.html">
+        Header add Link "</style.css>; rel=preload; as=style"
+        Header add Link "</manifest.json>; rel=preload; as=manifest"
+    </Files>
+</IfModule>
+
+# Mime типы для PWA
+AddType application/manifest+json .json
+AddType application/x-web-app-manifest+json .webapp
+AddType text/cache-manifest .appcache
+
+# Правило для обслуживания файлов с правильными заголовками
+<IfModule mod_rewrite.c>
+    # Если файл не существует, направляем на главную (для SPA routing)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !^/(service-worker\.js|manifest\.json|offline\.html)
+    RewriteRule . / [L]
+</IfModule>
