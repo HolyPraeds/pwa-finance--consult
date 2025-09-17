@@ -1,5 +1,16 @@
 {
-  "name": "Lubov Kacanova",
-  "short_name": "Финансист",
-  "description": "Your finance not your problem"
+  "name": "Lyubov Kachanova - Finance Leader",
+  "short_name": "L.Kachanova",
+  "description": "CFO & Accounting Expert - Financial Management and Control",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A2E2A",
+  "theme_color": "#0A2E2A",
+  "icons": [
+    {
+      "src": "75e8f0fc-2da1-4b71-ab30-df48b54621d3.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    }
+  ]
 }
