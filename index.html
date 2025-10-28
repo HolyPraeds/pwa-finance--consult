@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lyubov Kachanova - Finance Leader | CFO & Accounting Expert</title>
+    <title>Lumen Libra - Finance with clarity and balance</title>
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
     
     <!-- Theme colors -->
-    <meta name="theme-color" content="#0A2E2A">
+    <meta name="theme-color" content="#2D5A27">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Lyubov Kachanova">
+    <meta name="apple-mobile-web-app-title" content="Lumen Libra">
     
     <!-- Icons -->
     <link rel="apple-touch-icon" href="icon-192x192.png">
@@ -42,13 +42,25 @@
     </div>
 
     <div class="container">
-        <!-- Header с фото и именем -->
-        <header class="profile-header">
-            <div class="profile-photo">
-                <img src="75e8f0fc-2da1-4b71-ab30-df48b54621d3.jpg" alt="Lyubov Kachanova" id="profile-img">
+        <!-- Company Header -->
+        <header class="company-header">
+            <div class="company-logo">
+                <div class="logo-container">
+                    <img src="lumen_libra_logo.jpg" alt="Lumen Libra Logo" class="company-logo-img">
+                </div>
             </div>
-            <h1 class="profile-name" id="profile-name">Lyubov Kachanova</h1>
-            <p class="profile-title" id="profile-title">Finance Leader | CFO & Accounting Expert</p>
+            <h1 class="company-name" id="company-name">Lumen Libra</h1>
+            <p class="company-slogan" id="company-slogan">Finance with clarity and balance</p>
+            
+            <!-- Personal Profile -->
+            <div class="profile-section">
+                <div class="profile-photo">
+                    <img src="75e8f0fc-2da1-4b71-ab30-df48b54621d3.jpg" alt="Lyubov Kachanova" id="profile-img">
+                </div>
+                <h2 class="profile-name" id="profile-name">Lyubov Kachanova</h2>
+                <p class="profile-title" id="profile-title">Finance Leader | CFO & Accounting Expert | Restructuring Finance Management</p>
+                  </div>
+            
             <div class="language-toggle">
                 <button class="lang-btn active" onclick="switchLanguage('en')" data-lang="en">EN</button>
                 <button class="lang-btn" onclick="switchLanguage('lv')" data-lang="lv">LV</button>
@@ -57,27 +69,27 @@
 
         <!-- Services Section -->
         <section class="services">
-            <h2 id="services-title">My Services</h2>
+            <h2 id="services-title">Our Services</h2>
             <div class="services-list">
                 <div class="service-item">
                     <span class="service-icon">💼</span>
                     <div class="service-content">
-                        <span class="service-title" data-en="Financial Management and Control" data-lv="Finanšu pārvaldība un kontrole">Financial Management and Control</span>
-                        <span class="service-desc" data-en="Strategic financial planning, budgeting, and performance monitoring" data-lv="Stratēģiskā finanšu plānošana, budžeta veidošana un veiktspējas uzraudzība">Strategic financial planning, budgeting, and performance monitoring</span>
+                        <span class="service-title" data-en="Financial Management & Control" data-lv="Finanšu pārvaldība un Kontrole">Financial Management & Control</span>
+                        <span class="service-desc" data-en="Strategic oversight, cash flow, risk management" data-lv="Stratēģiskā uzraudzība, naudas plūsma, risku pārvaldība">Strategic oversight, cash flow, risk management</span>
                     </div>
                 </div>
                 <div class="service-item">
                     <span class="service-icon">📊</span>
                     <div class="service-content">
-                        <span class="service-title" data-en="Accounting and Tax" data-lv="Grāmatvedība un nodokļi">Accounting and Tax</span>
-                        <span class="service-desc" data-en="Professional accounting services and tax compliance management" data-lv="Profesionāli grāmatvedības pakalpojumi un nodokļu atbilstības pārvaldība">Professional accounting services and tax compliance management</span>
+                        <span class="service-title" data-en="Accounting & Tax Outsource" data-lv="Grāmatvedība un nodokļu ārpakalpojumi">Accounting & Tax Outsource</span>
+                        <span class="service-desc" data-en="Reliable day-to-day accounting and compliance" data-lv="Uzticama ikdienas grāmatvedība un atbilstība normatīviem">Reliable day-to-day accounting and compliance</span>
                     </div>
                 </div>
                 <div class="service-item">
                     <span class="service-icon">⚙️</span>
                     <div class="service-content">
-                        <span class="service-title" data-en="Finance Systems, Processes and Compliance" data-lv="Finanšu sistēmas, procesi un atbilstība">Finance Systems, Processes and Compliance</span>
-                        <span class="service-desc" data-en="Implementation and optimization of financial systems and regulatory compliance" data-lv="Finanšu sistēmu ieviešana un optimizācija, normatīvo aktu ievērošana">Implementation and optimization of financial systems and regulatory compliance</span>
+                        <span class="service-title" data-en="Finance Systems, Processes & Compliance" data-lv="Finanšu sistēmas, procesi un atbilstība">Finance Systems, Processes & Compliance</span>
+                        <span class="service-desc" data-en="Streamlined processes, ERP, analytics, regulatory control" data-lv="Optimizēti procesi, ERP, analītika, regulatīvā kontrole">Streamlined processes, ERP, analytics, regulatory control</span>
                     </div>
                 </div>
             </div>
@@ -86,20 +98,23 @@
 
         <!-- Contact Buttons -->
         <section class="contact-buttons">
-            <a href="tel:+37126041555" class="contact-btn phone-btn">
-                <span class="btn-icon">📞</span>
-                <span data-en="Call" data-lv="Zvanīt">Call</span>
-            </a>
-            
-            <a href="mailto:lyubov.kachanova@outlook.com" class="contact-btn email-btn">
-                <span class="btn-icon">✉️</span>
-                <span data-en="Email" data-lv="E-pasts">Email</span>
-            </a>
+            <div class="contact-row">
+                <a href="tel:+37126041555" class="contact-btn-icon phone-btn" title="Call">
+                    <span class="btn-icon">📞</span>
+                </a>
+                
+                <a href="mailto:lyubov.kachanova@outlook.com" class="contact-btn-icon email-btn" title="Email">
+                    <span class="btn-icon">✉️</span>
+                </a>
 
-            <a href="https://www.linkedin.com/company/107887644/admin/dashboard/" class="contact-btn linkedin-btn" target="_blank">
-                <span class="btn-icon">💼</span>
-                <span data-en="LinkedIn" data-lv="LinkedIn">LinkedIn</span>
-            </a>
+                <a href="https://www.linkedin.com/in/lyubovkachanova/   " class="contact-btn-icon linkedin-btn" target="_blank" title="Personal LinkedIn">
+                    <span class="btn-icon">👤</span>
+                </a>
+
+                <a href="https://www.linkedin.com/company/lumen-libra" class="contact-btn-icon linkedin-corp-btn" target="_blank" title="Corporate LinkedIn">
+                    <span class="btn-icon">🏢</span>
+                </a>
+            </div>
         </section>
 
         <!-- Professional Info -->
@@ -148,14 +163,18 @@
         
         const translations = {
             en: {
+                'company-name': 'Lumen Libra',
+                'company-slogan': 'Finance with clarity and balance',
                 'profile-name': 'Lyubov Kachanova',
-                'profile-title': 'Finance Leader | CFO & Accounting Expert',
-                'services-title': 'My Services'
+                'profile-title': 'Finance Leader | CFO & Accounting Expert | Restructuring Finance Management',
+                'services-title': 'Our Services'
             },
             lv: {
+                'company-name': 'Lumen Libra',
+                'company-slogan': 'Finanšu skaidrība un līdzsvars',
                 'profile-name': 'Lyubov Kachanova',
-                'profile-title': 'CFO un grāmatvedības eksperts',
-                'services-title': 'Mani pakalpojumi'
+                'profile-title': 'CFO | Grāmatvedības eksperts | Restrukturēšanas finanses',
+                'services-title': 'Mūsu pakalpojumi'
             }
         };
         
@@ -385,21 +404,22 @@
         }
 
         :root {
-            /* Alp-Pay Brand Colors with Modern Design */
-            --primary-color: #0A2E2A; /* Deep Green (Primary Background) */
-            --primary-dark: #072220;
-            --primary-light: #3A6351; /* Soft Green (Secondary Accent) */
-            --secondary-color: #F9C80E; /* Bright Yellow (Accent) */
-            --success-color: #3A6351;
-            --text-color: #1C1C1C; /* Graphite Grey (Secondary) */
+            /* Lumen Libra Brand Colors - Emerald, White, Platinum */
+            --primary-color: #2D5A27; /* Emerald Green */
+            --primary-dark: #1B3A1A;
+            --primary-light: #4A7C59; /* Light Emerald */
+            --secondary-color: #E5E4E2; /* Platinum */
+            --accent-color: #50C878; /* Bright Emerald */
+            --success-color: #2D5A27;
+            --text-color: #1C1C1C; /* Dark Grey */
             --text-secondary: #666;
-            --background: linear-gradient(135deg, #F4EBD0 0%, #FFFFFF 100%); /* Warm Beige to White */
+            --background: linear-gradient(135deg, #F8F9FA 0%, #E5E4E2 100%); /* White to Platinum */
             --white: #FFFFFF;
             --shadow-light: rgba(0, 0, 0, 0.1);
             --shadow-medium: rgba(0, 0, 0, 0.15);
-            --shadow-primary: rgba(10, 46, 42, 0.3);
-            --glass-bg: rgba(255, 255, 255, 0.8);
-            --glass-border: rgba(10, 46, 42, 0.2);
+            --shadow-primary: rgba(45, 90, 39, 0.3);
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(45, 90, 39, 0.2);
         }
 
         body {
@@ -557,6 +577,75 @@
             margin: 0 auto;
             padding: 20px;
             min-height: 100vh;
+        }
+
+        /* Company Header */
+        .company-header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .company-logo {
+            margin-bottom: 20px;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            background: var(--white);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            box-shadow: 0 8px 25px var(--shadow-primary);
+            border: 3px solid var(--secondary-color);
+            padding: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .logo-container:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px var(--shadow-primary);
+        }
+
+        .company-logo-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .company-name {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px var(--shadow-light);
+            letter-spacing: 1px;
+        }
+
+        .company-slogan {
+            font-size: 16px;
+            color: var(--text-secondary);
+            font-weight: 300;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+
+        .company-slogan-lv {
+            font-size: 16px;
+            color: var(--text-secondary);
+            font-weight: 300;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .profile-section {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid var(--secondary-color);
         }
 
         /* Header */
@@ -791,10 +880,53 @@
 
         /* Contact Buttons */
         .contact-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
             margin-bottom: 25px;
+        }
+
+        .contact-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .contact-btn-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--shadow-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-btn-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .contact-btn-icon:hover::before {
+            left: 100%;
+        }
+
+        .contact-btn-icon:hover {
+            transform: translateY(-3px) scale(1.1);
+        }
+
+        .contact-btn-icon .btn-icon {
+            font-size: 20px;
+            z-index: 2;
+            position: relative;
         }
 
         .contact-btn {
@@ -841,18 +973,7 @@
         }
 
         .phone-btn:hover {
-            transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
-        }
-
-        .telegram-btn {
-            background: linear-gradient(135deg, #2196f3, #1976d2);
-            color: white;
-        }
-
-        .telegram-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
         }
 
         .email-btn {
@@ -861,7 +982,6 @@
         }
 
         .email-btn:hover {
-            transform: translateY(-2px);
             box-shadow: 0 8px 25px var(--shadow-primary);
         }
 
@@ -871,8 +991,16 @@
         }
 
         .linkedin-btn:hover {
-            transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 119, 181, 0.4);
+        }
+
+        .linkedin-corp-btn {
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-light));
+            color: white;
+        }
+
+        .linkedin-corp-btn:hover {
+            box-shadow: 0 8px 25px rgba(80, 200, 120, 0.4);
         }
 
         .btn-icon {
@@ -1184,8 +1312,35 @@
                 margin-bottom: 20px;
             }
             
+            .company-name {
+                font-size: 28px;
+            }
+
             .profile-name {
-                font-size: 24px;
+                font-size: 22px;
+            }
+
+            .profile-title {
+                font-size: 14px;
+            }
+
+            .company-slogan, .company-slogan-lv {
+                font-size: 14px;
+            }
+
+            .logo-container {
+                width: 80px;
+                height: 80px;
+                padding: 8px;
+            }
+
+            .contact-btn-icon {
+                width: 45px;
+                height: 45px;
+            }
+
+            .contact-btn-icon .btn-icon {
+                font-size: 18px;
             }
 
             .geometric-bg {
