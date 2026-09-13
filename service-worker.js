@@ -1,12 +1,13 @@
-const CACHE_NAME = 'finance-consultant-v1.0.0';
+const CACHE_NAME = 'finance-consultant-v1.3.0';
 const urlsToCache = [
   '/',
   '/index.html',
   '/style.css',
   '/manifest.json',
+  '/lyubov-kachanova.vcf',
   '/icon-192x192.png',
   '/icon-512x512.png',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face'crop=face'
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face'
 ];
 
 // Установка Service Worker

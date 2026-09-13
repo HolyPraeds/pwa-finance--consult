@@ -1,12 +1,12 @@
 {
-  "name": "Lumen Libra - Finance with clarity and balance",
+  "name": "Lumen Libra - Bringing structure to financial chaos",
   "short_name": "Lumen Libra",
-  "description": "CFO & Accounting Expert - Financial Management and Control",
+  "description": "Strategic Finance | Accounting | Financial Systems",
   "start_url": "https://holypraeds.github.io/pwa-finance--consult/",
   "scope": "https://holypraeds.github.io/pwa-finance--consult/",
   "display": "standalone",
-  "background_color": "#2D5A27",
-  "theme_color": "#2D5A27",
+  "background_color": "#01542C",
+  "theme_color": "#01542C",
   "icons": [
     {
       "src": "75e8f0fc-2da1-4b71-ab30-df48b54621d3.jpg",
