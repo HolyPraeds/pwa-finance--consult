@@ -24,7 +24,7 @@
     
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-icons="outline">
     <!-- Geometric Background -->
     <div class="geometric-bg">
         <div class="geometric-shapes">
@@ -75,21 +75,21 @@
             <h2 id="services-title">Our Services</h2>
             <div class="services-list">
                 <div class="service-item">
-                    <span class="service-icon">💼</span>
+                    <span class="service-icon"><img src="icons/service-finance.png" alt=""></span>
                     <div class="service-content">
                         <span class="service-title" data-en="Financial Management & Control" data-lv="Finanšu vadība un kontrole">Financial Management & Control</span>
                         <span class="service-desc" data-en="Strategic oversight, cash flow, risk control" data-lv="Stratēģiskā finanšu vadība, naudas plūsma, risku kontrole">Strategic oversight, cash flow, risk control</span>
                     </div>
                 </div>
                 <div class="service-item">
-                    <span class="service-icon">📊</span>
+                    <span class="service-icon"><img src="icons/service-accounting.png" alt=""></span>
                     <div class="service-content">
                         <span class="service-title" data-en="Accounting & Tax Outsourcing" data-lv="Grāmatvedības un nodokļu ārpakalpojumi">Accounting & Tax Outsourcing</span>
                         <span class="service-desc" data-en="Full-cycle accounting, tax compliance & reporting" data-lv="Pilna cikla grāmatvedība, nodokļu atbilstība un pārskati">Full-cycle accounting, tax compliance & reporting</span>
                     </div>
                 </div>
                 <div class="service-item">
-                    <span class="service-icon">⚙️</span>
+                    <span class="service-icon"><img src="icons/service-systems.png" alt=""></span>
                     <div class="service-content">
                         <span class="service-title" data-en="Financial Systems, Processes & Compliance" data-lv="Finanšu sistēmas, procesi un atbilstība">Financial Systems, Processes & Compliance</span>
                         <span class="service-desc" data-en="ERP support, process improvement, analytics & internal controls" data-lv="ERP atbalsts, procesu pilnveide, analītika un iekšējā kontrole">ERP support, process improvement, analytics & internal controls</span>
@@ -129,14 +129,8 @@
                     <line x1="19" y1="8" x2="19" y2="14"/>
                     <line x1="22" y1="11" x2="16" y2="11"/>
                 </svg>
-                <span data-en="Save Contact" data-lv="Saglabāt kontaktu">Save Contact</span>
+                <span data-en="Save Card" data-lv="Saglabāt vizītkarti">Save Card</span>
             </a>
-            <div class="icon-style-toggle" role="group" aria-label="Icon style">
-                <span class="icon-style-label" data-en="Icon styles" data-lv="Stili ikonām">Icon styles</span>
-                <button type="button" class="icon-style-btn active" data-icon-style="brand" data-en="Color" data-lv="Krāsa">Color</button>
-                <button type="button" class="icon-style-btn" data-icon-style="emerald" data-en="Emerald" data-lv="Smaragds">Emerald</button>
-                <button type="button" class="icon-style-btn" data-icon-style="outline" data-en="Line" data-lv="Līnija">Line</button>
-            </div>
         </section>
 
         <!-- Professional Info -->
@@ -166,7 +160,7 @@
         <div class="qr-modal" id="qr-modal">
             <div class="qr-modal-content">
                 <div class="qr-header">
-                    <h3 data-en="Share Profile" data-lv="Dalīties ar profilu">Share Profile</h3>
+                    <h3 data-en="Share Card" data-lv="Dalīties ar vizītkarti">Share Card</h3>
                     <button class="qr-close" id="qr-close">&times;</button>
                 </div>
                 <div class="qr-code-container">
@@ -174,7 +168,17 @@
                         <img src="4896390a670ea014a4669ac1e29883d3.svg" alt="QR Code" class="qr-image">
                     </div>
                 </div>
-                <p class="qr-description" data-en="Scan to open profile" data-lv="Skenēt, lai atvērtu profilu">Scan to open profile</p>
+                <p class="qr-description" data-en="Scan to open the card" data-lv="Skenēt, lai atvērtu vizītkarti">Scan to open the card</p>
+                <p class="share-link-text" id="share-link-text"></p>
+                <div class="qr-actions">
+                    <button type="button" class="qr-action-btn" id="share-link-btn">
+                        <span data-en="Share link" data-lv="Kopīgot saiti">Share link</span>
+                    </button>
+                    <a href="lyubov-kachanova.vcf" class="qr-action-btn qr-action-save">
+                        <span data-en="Save Card" data-lv="Saglabāt vizītkarti">Save Card</span>
+                    </a>
+                </div>
+                <p class="share-status" id="share-status" hidden></p>
             </div>
         </div>
     </div>
@@ -242,24 +246,52 @@
             localStorage.setItem('preferredLanguage', lang);
         }
         
-        function setIconStyle(style) {
-            document.body.setAttribute('data-icons', style);
-            document.querySelectorAll('.icon-style-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-icon-style') === style);
-            });
-            localStorage.setItem('iconStyle', style);
+        function cardShareUrl() {
+            return window.location.href.split('#')[0];
+        }
+
+        function showShareStatus(text) {
+            const status = document.getElementById('share-status');
+            if (!status) return;
+            status.hidden = false;
+            status.textContent = text;
+            setTimeout(() => { status.hidden = true; }, 2200);
+        }
+
+        async function shareCardLink() {
+            const url = cardShareUrl();
+            const title = 'Lumen Libra — Lyubov Kachanova';
+            try {
+                if (navigator.share) {
+                    await navigator.share({ title, url });
+                    return;
+                }
+            } catch (err) {
+                if (err && err.name === 'AbortError') return;
+            }
+            try {
+                await navigator.clipboard.writeText(url);
+                showShareStatus(currentLanguage === 'lv' ? 'Saite nokopēta' : 'Link copied');
+            } catch (err) {
+                showShareStatus(url);
+            }
         }
 
         // Load saved language preference
         document.addEventListener('DOMContentLoaded', () => {
             const savedLang = localStorage.getItem('preferredLanguage') || 'en';
             switchLanguage(savedLang);
+            document.body.setAttribute('data-icons', 'outline');
+            localStorage.setItem('iconStyle', 'outline');
 
-            const savedIconStyle = localStorage.getItem('iconStyle') || 'brand';
-            setIconStyle(savedIconStyle);
-            document.querySelectorAll('.icon-style-btn').forEach(btn => {
-                btn.addEventListener('click', () => setIconStyle(btn.getAttribute('data-icon-style')));
-            });
+            const shareLinkText = document.getElementById('share-link-text');
+            if (shareLinkText) {
+                shareLinkText.textContent = cardShareUrl();
+            }
+            const shareLinkBtn = document.getElementById('share-link-btn');
+            if (shareLinkBtn) {
+                shareLinkBtn.addEventListener('click', shareCardLink);
+            }
         });
 
         // Service Worker Registration
@@ -847,17 +879,24 @@
         }
 
         .service-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-            border-radius: 12px;
+            width: 56px;
+            height: 56px;
+            background: transparent;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 1.5rem;
             flex-shrink: 0;
-            box-shadow: 0 8px 32px rgba(1, 84, 44, 0.3);
+            overflow: hidden;
+            box-shadow: none;
+            padding: 0;
+        }
+
+        .service-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .service-content {
@@ -1460,7 +1499,48 @@
         .qr-description {
             color: var(--text-secondary);
             font-size: 14px;
-            margin: 0;
+            margin: 0 0 8px;
+        }
+
+        .share-link-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            word-break: break-all;
+            margin: 0 0 14px;
+        }
+
+        .qr-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .qr-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 25px;
+            border: 1.5px solid var(--primary-color);
+            background: var(--white);
+            color: var(--primary-color);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .qr-action-save {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .share-status {
+            margin: 10px 0 0;
+            font-size: 12px;
+            color: var(--primary-color);
         }
 
         @keyframes fadeIn {
