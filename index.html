@@ -179,39 +179,12 @@
                         <span data-en="Save card" data-lv="Saglabāt vizītkarti">Save card</span>
                     </button>
                 </div>
-                <p class="share-status" id="share-status" hidden></p>
-            </div>
-        </div>
-
-        <!-- iOS: Safari-only Add to Home Screen (no Web API on iPhone) -->
-        <div class="qr-modal" id="ios-install-modal" aria-hidden="true">
-            <div class="qr-modal-content ios-install-content">
-                <div class="qr-header">
-                    <h3 data-en="Save to Home Screen" data-lv="Saglabāt uz sākuma ekrāna">Save to Home Screen</h3>
-                    <button type="button" class="qr-close" id="ios-install-close" aria-label="Close">&times;</button>
-                </div>
-                <p class="ios-install-lead"
-                   data-en="iPhone only allows this through Safari — like bank apps that show steps, not the system sheet from a website button."
-                   data-lv="iPhone ļauj to tikai caur Safari — tāpat kā banku lietotnes parāda soļus, nevis sistēmas logu no pogas vietnē.">
-                    iPhone only allows this through Safari — like bank apps that show steps, not the system sheet from a website button.
+                <p class="ios-home-hint" id="ios-home-hint" hidden
+                   data-en="iPhone: “Share link” only sends the URL. For a home screen icon, use Share in Safari’s bar below → Add to Home Screen."
+                   data-lv="iPhone: “Kopīgot saiti” tikai nosūta saiti. Ikona sākuma ekrānā: Safari joslā Dalīties → Pievienot sākuma ekrānam.">
+                    iPhone: “Share link” only sends the URL. For a home screen icon, use Share in Safari’s bar below → Add to Home Screen.
                 </p>
-                <ol class="ios-install-steps">
-                    <li data-en="If you opened the link in Telegram or WhatsApp, tap … → Open in Safari."
-                        data-lv="Ja atvērāt saiti Telegram vai WhatsApp, spiediet … → Atvērt Safari.">
-                        If you opened the link in Telegram or WhatsApp, tap … → Open in Safari.
-                    </li>
-                    <li data-en="In Safari, tap Share at the bottom of the screen (the ↑ bar icon)."
-                        data-lv="Safari apakšā spiediet Dalīties (ikona ↑ joslā).">
-                        In Safari, tap Share at the bottom of the screen (the ↑ bar icon).
-                    </li>
-                    <li data-en="Scroll the list and tap Add to Home Screen, then Add."
-                        data-lv="Ritiniet sarakstu un izvēlieties Pievienot sākuma ekrānam, tad Pievienot.">
-                        Scroll the list and tap Add to Home Screen, then Add.
-                    </li>
-                </ol>
-                <button type="button" class="qr-action-btn qr-action-save ios-install-done" id="ios-install-done">
-                    <span data-en="Got it" data-lv="Skaidrs">Got it</span>
-                </button>
+                <p class="share-status" id="share-status" hidden></p>
             </div>
         </div>
     </div>
@@ -291,18 +264,12 @@
             return navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
         }
 
-        function showIosInstallModal() {
-            const modal = document.getElementById('ios-install-modal');
-            if (!modal) return;
-            modal.classList.add('show');
-            modal.setAttribute('aria-hidden', 'false');
-        }
-
-        function hideIosInstallModal() {
-            const modal = document.getElementById('ios-install-modal');
-            if (!modal) return;
-            modal.classList.remove('show');
-            modal.setAttribute('aria-hidden', 'true');
+        function applyIosInstallUi() {
+            const showHint = isAppleMobile() && !isStandaloneApp();
+            const hint = document.getElementById('ios-home-hint');
+            const saveBtn = document.getElementById('save-card-btn');
+            if (hint) hint.hidden = !showHint;
+            if (saveBtn) saveBtn.hidden = showHint;
         }
 
         function cardShareUrl() {
@@ -354,11 +321,6 @@
                 return;
             }
 
-            if (isAppleMobile()) {
-                showIosInstallModal();
-                return;
-            }
-
             const url = cardShareUrl();
             try {
                 if (navigator.share) {
@@ -389,16 +351,7 @@
                 saveCardBtn.addEventListener('click', saveCardToHome);
             }
 
-            const iosInstallClose = document.getElementById('ios-install-close');
-            const iosInstallDone = document.getElementById('ios-install-done');
-            const iosInstallModal = document.getElementById('ios-install-modal');
-            if (iosInstallClose) iosInstallClose.addEventListener('click', hideIosInstallModal);
-            if (iosInstallDone) iosInstallDone.addEventListener('click', hideIosInstallModal);
-            if (iosInstallModal) {
-                iosInstallModal.addEventListener('click', (e) => {
-                    if (e.target === iosInstallModal) hideIosInstallModal();
-                });
-            }
+            applyIosInstallUi();
         });
 
         // Service Worker Registration
@@ -570,13 +523,8 @@
 
         // Close modal with Escape key
         document.addEventListener('keydown', (e) => {
-            if (e.key !== 'Escape') return;
-            if (qrModal.classList.contains('show')) {
+            if (e.key === 'Escape' && qrModal.classList.contains('show')) {
                 qrModal.classList.remove('show');
-            }
-            const iosInstallModal = document.getElementById('ios-install-modal');
-            if (iosInstallModal && iosInstallModal.classList.contains('show')) {
-                hideIosInstallModal();
             }
         });
 
@@ -1641,37 +1589,12 @@
             color: var(--white);
         }
 
-        .ios-install-content {
-            max-width: 340px;
+        .ios-home-hint {
+            margin-top: 12px;
             text-align: left;
-        }
-
-        .ios-install-lead {
-            font-size: 13px;
+            font-size: 12px;
+            line-height: 1.45;
             color: var(--text-secondary);
-            line-height: 1.45;
-            margin: 0 0 14px;
-        }
-
-        .ios-install-steps {
-            margin: 0 0 18px;
-            padding-left: 20px;
-            color: var(--text-primary);
-        }
-
-        .ios-install-steps li {
-            font-size: 14px;
-            line-height: 1.45;
-            margin-bottom: 10px;
-        }
-
-        .ios-install-steps li:last-child {
-            margin-bottom: 0;
-        }
-
-        .ios-install-done {
-            width: 100%;
-            border: none;
         }
 
         .install-hint {
