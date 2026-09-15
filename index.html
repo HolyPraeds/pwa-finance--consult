@@ -171,14 +171,13 @@
                     </div>
                 </div>
                 <p class="qr-description" data-en="Scan to open the card" data-lv="Skenēt, lai atvērtu vizītkarti">Scan to open the card</p>
-                <p class="share-link-text" id="share-link-text"></p>
                 <div class="qr-actions">
                     <button type="button" class="qr-action-btn" id="share-link-btn">
                         <span data-en="Share link" data-lv="Kopīgot saiti">Share link</span>
                     </button>
-                    <a href="lyubov-kachanova.vcf" class="qr-action-btn qr-action-save">
-                        <span data-en="Add Contact" data-lv="Pievienot kontaktu">Add Contact</span>
-                    </a>
+                    <button type="button" class="qr-action-btn qr-action-save" id="save-card-btn">
+                        <span data-en="Save card" data-lv="Saglabāt vizītkarti">Save card</span>
+                    </button>
                 </div>
                 <p class="share-status" id="share-status" hidden></p>
             </div>
@@ -248,8 +247,14 @@
             localStorage.setItem('preferredLanguage', lang);
         }
         
+        let deferredPrompt = null;
+
+        function isStandaloneApp() {
+            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        }
+
         function cardShareUrl() {
-            return window.location.href.split('#')[0];
+            return window.location.href.split('?')[0].split('#')[0];
         }
 
         function showShareStatus(text) {
@@ -257,7 +262,7 @@
             if (!status) return;
             status.hidden = false;
             status.textContent = text;
-            setTimeout(() => { status.hidden = true; }, 2200);
+            setTimeout(() => { status.hidden = true; }, 2800);
         }
 
         async function shareCardLink() {
@@ -275,7 +280,39 @@
                 await navigator.clipboard.writeText(url);
                 showShareStatus(currentLanguage === 'lv' ? 'Saite nokopēta' : 'Link copied');
             } catch (err) {
-                showShareStatus(url);
+                showShareStatus(currentLanguage === 'lv' ? 'Saite nokopēta' : 'Link copied');
+            }
+        }
+
+        async function saveCardToHome() {
+            if (isStandaloneApp()) {
+                showShareStatus(currentLanguage === 'lv' ? 'Vizītkarte jau ir uz sākuma ekrāna' : 'The card is already on your home screen');
+                return;
+            }
+
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                const installBtn = document.getElementById('install-btn');
+                if (installBtn) installBtn.style.display = 'none';
+                if (outcome === 'accepted') {
+                    showShareStatus(currentLanguage === 'lv' ? 'Vizītkarte saglabāta' : 'Card saved to your phone');
+                }
+                return;
+            }
+
+            const url = cardShareUrl();
+            try {
+                if (navigator.share) {
+                    await navigator.share({
+                        title: 'Lumen Libra — Lyubov Kachanova',
+                        url
+                    });
+                    return;
+                }
+            } catch (err) {
+                if (err && err.name === 'AbortError') return;
             }
         }
 
@@ -286,13 +323,13 @@
             document.body.setAttribute('data-icons', 'outline');
             localStorage.setItem('iconStyle', 'outline');
 
-            const shareLinkText = document.getElementById('share-link-text');
-            if (shareLinkText) {
-                shareLinkText.textContent = cardShareUrl();
-            }
             const shareLinkBtn = document.getElementById('share-link-btn');
             if (shareLinkBtn) {
                 shareLinkBtn.addEventListener('click', shareCardLink);
+            }
+            const saveCardBtn = document.getElementById('save-card-btn');
+            if (saveCardBtn) {
+                saveCardBtn.addEventListener('click', saveCardToHome);
             }
         });
 
@@ -310,13 +347,11 @@
         }
 
         // PWA Install prompt
-        let deferredPrompt;
         const installBtn = document.getElementById('install-btn');
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            installBtn.style.display = 'flex';
         });
 
         installBtn.addEventListener('click', async () => {
@@ -1502,13 +1537,6 @@
         .qr-description {
             color: var(--text-secondary);
             font-size: 14px;
-            margin: 0 0 8px;
-        }
-
-        .share-link-text {
-            font-size: 12px;
-            color: var(--text-secondary);
-            word-break: break-all;
             margin: 0 0 14px;
         }
 
@@ -1538,6 +1566,25 @@
         .qr-action-save {
             background: var(--primary-color);
             color: var(--white);
+        }
+
+        .install-hint {
+            margin-top: 12px;
+            text-align: left;
+            background: #F5F7FB;
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+
+        .install-hint p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.45;
+            margin: 0 0 8px;
+        }
+
+        .install-hint p:last-child {
+            margin-bottom: 0;
         }
 
         .share-status {
