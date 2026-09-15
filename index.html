@@ -18,9 +18,11 @@
     <meta name="apple-mobile-web-app-title" content="Lumen Libra">
     
     <!-- Icons -->
-    <link rel="apple-touch-icon" href="icon-192x192.png">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
     
     <link rel="stylesheet" href="style.css">
 </head>
@@ -58,7 +60,7 @@
             <!-- Personal Profile -->
             <div class="profile-section">
                 <div class="profile-photo">
-                    <img src="75e8f0fc-2da1-4b71-ab30-df48b54621d3.jpg" alt="Lyubov Kachanova" id="profile-img">
+                    <img src="profile-square.jpg" alt="Lyubov Kachanova" id="profile-img">
                 </div>
                 <h2 class="profile-name" id="profile-name">Lyubov Kachanova</h2>
                 <p class="profile-title" id="profile-title">Strategic Finance | Accounting | Financial Systems</p>
@@ -129,7 +131,7 @@
                     <line x1="19" y1="8" x2="19" y2="14"/>
                     <line x1="22" y1="11" x2="16" y2="11"/>
                 </svg>
-                <span data-en="Save Card" data-lv="Saglabāt vizītkarti">Save Card</span>
+                <span data-en="Add Contact" data-lv="Pievienot kontaktu">Add Contact</span>
             </a>
         </section>
 
@@ -175,7 +177,7 @@
                         <span data-en="Share link" data-lv="Kopīgot saiti">Share link</span>
                     </button>
                     <a href="lyubov-kachanova.vcf" class="qr-action-btn qr-action-save">
-                        <span data-en="Save Card" data-lv="Saglabāt vizītkarti">Save Card</span>
+                        <span data-en="Add Contact" data-lv="Pievienot kontaktu">Add Contact</span>
                     </a>
                 </div>
                 <p class="share-status" id="share-status" hidden></p>
@@ -747,6 +749,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center 20%;
             transition: transform 0.3s ease;
         }
 

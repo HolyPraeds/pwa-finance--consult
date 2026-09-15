@@ -1,10 +1,15 @@
-const CACHE_NAME = 'finance-consultant-v1.4.0';
+const CACHE_NAME = 'finance-consultant-v1.4.2';
 const urlsToCache = [
   '/',
   '/index.html',
   '/style.css',
   '/manifest.json',
   '/lyubov-kachanova.vcf',
+  '/favicon.ico',
+  '/favicon-32x32.png',
+  '/icon-192x192.png',
+  '/apple-touch-icon.png',
+  '/profile-square.jpg',
   '/icons/service-finance.png',
   '/icons/service-accounting.png',
   '/icons/service-systems.png'
