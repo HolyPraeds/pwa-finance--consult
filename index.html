@@ -179,6 +179,11 @@
                         <span data-en="Save card" data-lv="Saglabāt vizītkarti">Save card</span>
                     </button>
                 </div>
+                <p class="ios-home-hint" id="ios-home-hint" hidden
+                   data-en="For a home screen icon, use Share in Safari’s bar below → Add to Home Screen."
+                   data-lv="Ikona sākuma ekrānā: Safari joslā Dalīties → Pievienot sākuma ekrānam.">
+                    For a home screen icon, use Share in Safari’s bar below → Add to Home Screen.
+                </p>
                 <p class="share-status" id="share-status" hidden></p>
             </div>
         </div>
@@ -260,9 +265,11 @@
         }
 
         function applyIosInstallUi() {
-            const hideSave = isAppleMobile() && !isStandaloneApp();
+            const showHint = isAppleMobile() && !isStandaloneApp();
+            const hint = document.getElementById('ios-home-hint');
             const saveBtn = document.getElementById('save-card-btn');
-            if (saveBtn) saveBtn.hidden = hideSave;
+            if (hint) hint.hidden = !showHint;
+            if (saveBtn) saveBtn.hidden = showHint;
         }
 
         function cardShareUrl() {
@@ -1580,6 +1587,14 @@
         .qr-action-save {
             background: var(--primary-color);
             color: var(--white);
+        }
+
+        .ios-home-hint {
+            margin-top: 12px;
+            text-align: left;
+            font-size: 12px;
+            line-height: 1.45;
+            color: var(--text-secondary);
         }
 
         .install-hint {
