@@ -182,6 +182,38 @@
                 <p class="share-status" id="share-status" hidden></p>
             </div>
         </div>
+
+        <!-- iOS: Safari-only Add to Home Screen (no Web API on iPhone) -->
+        <div class="qr-modal" id="ios-install-modal" aria-hidden="true">
+            <div class="qr-modal-content ios-install-content">
+                <div class="qr-header">
+                    <h3 data-en="Save to Home Screen" data-lv="Saglabāt uz sākuma ekrāna">Save to Home Screen</h3>
+                    <button type="button" class="qr-close" id="ios-install-close" aria-label="Close">&times;</button>
+                </div>
+                <p class="ios-install-lead"
+                   data-en="iPhone only allows this through Safari — like bank apps that show steps, not the system sheet from a website button."
+                   data-lv="iPhone ļauj to tikai caur Safari — tāpat kā banku lietotnes parāda soļus, nevis sistēmas logu no pogas vietnē.">
+                    iPhone only allows this through Safari — like bank apps that show steps, not the system sheet from a website button.
+                </p>
+                <ol class="ios-install-steps">
+                    <li data-en="If you opened the link in Telegram or WhatsApp, tap … → Open in Safari."
+                        data-lv="Ja atvērāt saiti Telegram vai WhatsApp, spiediet … → Atvērt Safari.">
+                        If you opened the link in Telegram or WhatsApp, tap … → Open in Safari.
+                    </li>
+                    <li data-en="In Safari, tap Share at the bottom of the screen (the ↑ bar icon)."
+                        data-lv="Safari apakšā spiediet Dalīties (ikona ↑ joslā).">
+                        In Safari, tap Share at the bottom of the screen (the ↑ bar icon).
+                    </li>
+                    <li data-en="Scroll the list and tap Add to Home Screen, then Add."
+                        data-lv="Ritiniet sarakstu un izvēlieties Pievienot sākuma ekrānam, tad Pievienot.">
+                        Scroll the list and tap Add to Home Screen, then Add.
+                    </li>
+                </ol>
+                <button type="button" class="qr-action-btn qr-action-save ios-install-done" id="ios-install-done">
+                    <span data-en="Got it" data-lv="Skaidrs">Got it</span>
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
@@ -253,6 +285,26 @@
             return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         }
 
+        function isAppleMobile() {
+            const ua = window.navigator.userAgent || '';
+            if (/iPad|iPhone|iPod/.test(ua)) return true;
+            return navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+        }
+
+        function showIosInstallModal() {
+            const modal = document.getElementById('ios-install-modal');
+            if (!modal) return;
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function hideIosInstallModal() {
+            const modal = document.getElementById('ios-install-modal');
+            if (!modal) return;
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
         function cardShareUrl() {
             return window.location.href.split('?')[0].split('#')[0];
         }
@@ -302,6 +354,11 @@
                 return;
             }
 
+            if (isAppleMobile()) {
+                showIosInstallModal();
+                return;
+            }
+
             const url = cardShareUrl();
             try {
                 if (navigator.share) {
@@ -330,6 +387,17 @@
             const saveCardBtn = document.getElementById('save-card-btn');
             if (saveCardBtn) {
                 saveCardBtn.addEventListener('click', saveCardToHome);
+            }
+
+            const iosInstallClose = document.getElementById('ios-install-close');
+            const iosInstallDone = document.getElementById('ios-install-done');
+            const iosInstallModal = document.getElementById('ios-install-modal');
+            if (iosInstallClose) iosInstallClose.addEventListener('click', hideIosInstallModal);
+            if (iosInstallDone) iosInstallDone.addEventListener('click', hideIosInstallModal);
+            if (iosInstallModal) {
+                iosInstallModal.addEventListener('click', (e) => {
+                    if (e.target === iosInstallModal) hideIosInstallModal();
+                });
             }
         });
 
@@ -502,8 +570,13 @@
 
         // Close modal with Escape key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && qrModal.classList.contains('show')) {
+            if (e.key !== 'Escape') return;
+            if (qrModal.classList.contains('show')) {
                 qrModal.classList.remove('show');
+            }
+            const iosInstallModal = document.getElementById('ios-install-modal');
+            if (iosInstallModal && iosInstallModal.classList.contains('show')) {
+                hideIosInstallModal();
             }
         });
 
@@ -1566,6 +1639,39 @@
         .qr-action-save {
             background: var(--primary-color);
             color: var(--white);
+        }
+
+        .ios-install-content {
+            max-width: 340px;
+            text-align: left;
+        }
+
+        .ios-install-lead {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.45;
+            margin: 0 0 14px;
+        }
+
+        .ios-install-steps {
+            margin: 0 0 18px;
+            padding-left: 20px;
+            color: var(--text-primary);
+        }
+
+        .ios-install-steps li {
+            font-size: 14px;
+            line-height: 1.45;
+            margin-bottom: 10px;
+        }
+
+        .ios-install-steps li:last-child {
+            margin-bottom: 0;
+        }
+
+        .ios-install-done {
+            width: 100%;
+            border: none;
         }
 
         .install-hint {
