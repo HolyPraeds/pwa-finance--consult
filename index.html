@@ -3,7 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lumen Libra - Bringing structure to financial chaos</title>
+    <title>Lyubov Kachanova — Lumen Libra</title>
+    <meta name="description" content="Lyubov Kachanova — Lumen Libra. Bringing structure to financial chaos.">
+    <link rel="canonical" href="https://holypraeds.github.io/pwa-finance--consult/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://holypraeds.github.io/pwa-finance--consult/">
+    <meta property="og:title" content="Lyubov Kachanova — Lumen Libra">
+    <meta property="og:description" content="Bringing structure to financial chaos">
+    <meta property="og:image" content="https://holypraeds.github.io/pwa-finance--consult/profile-square.jpg">
+    <meta property="og:image:width" content="600">
+    <meta property="og:image:height" content="600">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Lyubov Kachanova — Lumen Libra">
+    <meta name="twitter:description" content="Bringing structure to financial chaos">
+    <meta name="twitter:image" content="https://holypraeds.github.io/pwa-finance--consult/profile-square.jpg">
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -124,7 +138,7 @@
                     <svg class="btn-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
                 </a>
             </div>
-            <a href="lyubov-kachanova.vcf" class="save-contact-full" type="text/vcard">
+            <a href="lyubov-kachanova.vcf" class="save-contact-full" id="add-contact-btn" type="text/vcard">
                 <svg class="btn-svg" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
                     <circle cx="9" cy="7" r="4"/>
@@ -248,13 +262,68 @@
         }
         
         let deferredPrompt = null;
+        const LIVE_CARD_URL = 'https://holypraeds.github.io/pwa-finance--consult/?v=20260916';
+        const CONTACT_VCARD_URL = 'lyubov-kachanova.vcf';
 
         function isStandaloneApp() {
             return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         }
 
+        function isAndroidPhone() {
+            return /Android/i.test(navigator.userAgent);
+        }
+
+        function isApplePhone() {
+            return /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        }
+
         function cardShareUrl() {
-            return window.location.href.split('?')[0].split('#')[0];
+            return LIVE_CARD_URL;
+        }
+
+        function androidAddContactIntent() {
+            return [
+                'intent:#Intent',
+                'action=android.intent.action.INSERT',
+                'type=vnd.android.cursor.dir/contact',
+                'S.name=' + encodeURIComponent('Lyubov Kachanova'),
+                'S.phone=' + encodeURIComponent('+37126041555'),
+                'S.email=' + encodeURIComponent('lyubov@lumenlibra.com'),
+                'S.company=' + encodeURIComponent('Lumen Libra'),
+                'S.job_title=' + encodeURIComponent('Strategic Finance | Accounting | Financial Systems'),
+                'S.notes=' + encodeURIComponent('https://lumenlibra.com'),
+                'end'
+            ].join(';');
+        }
+
+        async function addContactToPhone(event) {
+            if (isApplePhone()) return;
+
+            event.preventDefault();
+
+            try {
+                const response = await fetch(CONTACT_VCARD_URL, { cache: 'no-store' });
+                const text = await response.text();
+                const file = new File([text], 'Lyubov Kachanova.vcf', { type: 'text/vcard' });
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Lyubov Kachanova',
+                        text: 'Lyubov Kachanova — Lumen Libra'
+                    });
+                    return;
+                }
+            } catch (err) {
+                if (err && err.name === 'AbortError') return;
+            }
+
+            if (isAndroidPhone()) {
+                window.location.href = androidAddContactIntent();
+                return;
+            }
+
+            window.location.href = CONTACT_VCARD_URL;
         }
 
         function showShareStatus(text) {
@@ -267,10 +336,14 @@
 
         async function shareCardLink() {
             const url = cardShareUrl();
-            const title = 'Lumen Libra — Lyubov Kachanova';
+            const title = 'Lyubov Kachanova — Lumen Libra';
             try {
                 if (navigator.share) {
-                    await navigator.share({ title, url });
+                    await navigator.share({
+                        title,
+                        text: title,
+                        url
+                    });
                     return;
                 }
             } catch (err) {
@@ -306,7 +379,8 @@
             try {
                 if (navigator.share) {
                     await navigator.share({
-                        title: 'Lumen Libra — Lyubov Kachanova',
+                        title: 'Lyubov Kachanova — Lumen Libra',
+                        text: 'Lyubov Kachanova — Lumen Libra',
                         url
                     });
                     return;
@@ -329,6 +403,10 @@
             const saveCardBtn = document.getElementById('save-card-btn');
             if (saveCardBtn) {
                 saveCardBtn.addEventListener('click', saveCardToHome);
+            }
+            const addContactBtn = document.getElementById('add-contact-btn');
+            if (addContactBtn) {
+                addContactBtn.addEventListener('click', addContactToPhone);
             }
         });
 
