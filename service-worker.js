@@ -1,4 +1,4 @@
-const CACHE_NAME = 'finance-consultant-v1.4.2';
+const CACHE_NAME = 'finance-consultant-v1.4.3';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -10,6 +10,8 @@ const urlsToCache = [
   '/icon-192x192.png',
   '/apple-touch-icon.png',
   '/profile-square.jpg',
+  '/icon-photo-192.png',
+  '/icon-photo-512.png',
   '/icons/service-finance.png',
   '/icons/service-accounting.png',
   '/icons/service-systems.png'
