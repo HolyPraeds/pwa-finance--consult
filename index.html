@@ -147,6 +147,7 @@
                 </svg>
                 <span data-en="Add Contact" data-lv="Pievienot kontaktu">Add Contact</span>
             </a>
+            <p class="contact-hint" id="contact-hint" hidden data-en="Android: open the downloaded file and choose Contacts" data-lv="Android: atveriet lejupielādēto failu un izvēlieties Contacts">Android: open the downloaded file and choose Contacts</p>
         </section>
 
         <!-- Professional Info -->
@@ -296,25 +297,17 @@
             return LIVE_CARD_URL;
         }
 
-        function androidAddContactIntent() {
-            return [
-                'intent:#Intent',
-                'action=android.intent.action.INSERT',
-                'type=vnd.android.cursor.dir/contact',
-                'S.name=' + encodeURIComponent('Lyubov Kachanova'),
-                'S.phone=' + encodeURIComponent('+37126041555'),
-                'S.email=' + encodeURIComponent('lyubov@lumenlibra.com'),
-                'S.company=' + encodeURIComponent('Lumen Libra'),
-                'S.job_title=' + encodeURIComponent('Strategic Finance | Accounting | Financial Systems'),
-                'S.notes=' + encodeURIComponent('https://lumenlibra.com'),
-                'S.browser_fallback_url=' + encodeURIComponent(LIVE_VCF_URL),
-                'end'
-            ].join(';');
+        function androidVcfUrl() {
+            try {
+                return new URL('lyubov-kachanova.vcf', window.location.href).href;
+            } catch (err) {
+                return LIVE_VCF_URL;
+            }
         }
 
         function contactFileForShare() {
-            if (!navigator.canShare) return null;
-            const types = ['text/vcard', 'text/x-vcard'];
+            if (!navigator.share || !navigator.canShare) return null;
+            const types = ['text/vcard', 'text/x-vcard', 'text/plain'];
             for (let i = 0; i < types.length; i++) {
                 const file = new File([CONTACT_VCARD], 'Lyubov Kachanova.vcf', { type: types[i] });
                 try {
@@ -328,17 +321,21 @@
             if (isApplePhone()) return;
             if (!isAndroidPhone()) return;
 
+            event.preventDefault();
+
             const file = contactFileForShare();
             if (file) {
-                event.preventDefault();
                 navigator.share({
                     files: [file],
                     title: 'Lyubov Kachanova'
                 }).catch(function (err) {
                     if (err && err.name === 'AbortError') return;
-                    window.location.href = androidAddContactIntent();
+                    window.location.assign(androidVcfUrl());
                 });
+                return;
             }
+
+            window.location.assign(androidVcfUrl());
         }
 
         function showShareStatus(text) {
@@ -421,23 +418,67 @@
             }
             const addContactBtn = document.getElementById('add-contact-btn');
             if (addContactBtn) {
-                if (isAndroidPhone()) {
-                    addContactBtn.href = androidAddContactIntent();
-                }
                 addContactBtn.addEventListener('click', addContactToPhone);
+            }
+            const contactHint = document.getElementById('contact-hint');
+            if (contactHint && isAndroidPhone()) {
+                contactHint.hidden = false;
             }
         });
 
-        // Service Worker Registration
+        const APP_VERSION = '1.4.7';
+
+        async function clearOutdatedCaches() {
+            if (!('caches' in window)) return;
+            const keys = await caches.keys();
+            await Promise.all(
+                keys
+                    .filter((key) => key !== 'finance-consultant-v' + APP_VERSION)
+                    .map((key) => caches.delete(key))
+            );
+        }
+
+        function activateWaitingWorker(worker) {
+            if (!worker) return;
+            worker.postMessage({ type: 'SKIP_WAITING' });
+        }
+
         if ('serviceWorker' in navigator) {
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
+                refreshing = true;
+                window.location.reload();
+            });
+
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js')
+                clearOutdatedCaches();
+                navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' })
                     .then((registration) => {
-                        console.log('SW registered: ', registration);
+                        registration.update();
+                        if (registration.waiting) {
+                            activateWaitingWorker(registration.waiting);
+                        }
+                        registration.addEventListener('updatefound', () => {
+                            const worker = registration.installing;
+                            if (!worker) return;
+                            worker.addEventListener('statechange', () => {
+                                if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    activateWaitingWorker(worker);
+                                }
+                            });
+                        });
                     })
                     .catch((registrationError) => {
                         console.log('SW registration failed: ', registrationError);
                     });
+            });
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState !== 'visible') return;
+                navigator.serviceWorker.getRegistration().then((registration) => {
+                    if (registration) registration.update();
+                });
             });
         }
 
@@ -1147,7 +1188,16 @@
             color: white;
             background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
             box-shadow: 0 4px 15px var(--shadow-primary);
-            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .contact-hint {
+            margin: 10px 0 0;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.4;
+            color: var(--text-secondary);
         }
 
         .save-contact-full:hover {

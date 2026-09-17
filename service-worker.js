@@ -1,62 +1,43 @@
-const CACHE_NAME = 'finance-consultant-v1.4.5';
+const CACHE_NAME = 'finance-consultant-v1.4.7';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/manifest.json',
-  '/lyubov-kachanova.vcf',
-  '/favicon.ico',
-  '/favicon-32x32.png',
-  '/icon-192x192.png',
-  '/apple-touch-icon.png',
-  '/profile-square.jpg',
-  '/icon-photo-192.png',
-  '/icon-photo-512.png',
-  '/icons/service-finance.png',
-  '/icons/service-accounting.png',
-  '/icons/service-systems.png'
+  './',
+  './index.html',
+  './style.css',
+  './manifest.json',
+  './lyubov-kachanova.vcf',
+  './offline.html',
+  './favicon.ico',
+  './favicon-32x32.png',
+  './icon-192x192.png',
+  './apple-touch-icon.png',
+  './profile-square.jpg',
+  './icon-photo-192.png',
+  './icon-photo-512.png',
+  './icons/service-finance.png',
+  './icons/service-accounting.png',
+  './icons/service-systems.png'
 ];
 
-// Установка Service Worker
 self.addEventListener('install', (event) => {
-  console.log('Service Worker: Installing...');
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Service Worker: Caching files');
-        return cache.addAll(urlsToCache);
-      })
-      .then(() => {
-        console.log('Service Worker: All files cached');
-        return self.skipWaiting();
-      })
-      .catch((error) => {
-        console.error('Service Worker: Cache failed', error);
-      })
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    await Promise.all(urlsToCache.map((url) => cache.add(url).catch(() => undefined)));
+    await self.skipWaiting();
+  })());
 });
 
-// Активация Service Worker
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker: Activating...');
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Service Worker: Deleting old cache', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => {
-      console.log('Service Worker: Claiming clients');
-      return self.clients.claim();
-    })
-  );
+  event.waitUntil((async () => {
+    const cacheNames = await caches.keys();
+    await Promise.all(
+      cacheNames
+        .filter((cacheName) => cacheName !== CACHE_NAME)
+        .map((cacheName) => caches.delete(cacheName))
+    );
+    await self.clients.claim();
+  })());
 });
 
-// Перехват запросов (стратегия Cache First)
 self.addEventListener('fetch', (event) => {
   // Пропускаем запросы, которые не являются GET
   if (event.request.method !== 'GET') {
@@ -95,44 +76,53 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  const requestUrl = new URL(event.request.url);
+  const isHTML = event.request.mode === 'navigate' ||
+    (event.request.headers.get('accept') || '').includes('text/html') ||
+    requestUrl.pathname.endsWith('.html') ||
+    requestUrl.pathname.endsWith('/');
+  const isVcf = requestUrl.pathname.endsWith('.vcf');
+
+  if (isHTML || isVcf) {
+    event.respondWith(
+      fetch(event.request, { cache: 'no-store' })
+        .then((response) => {
+          if (response && response.status === 200) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return response;
+        })
+        .catch(async () => {
+          return (await caches.match(event.request))
+            || (await caches.match('./index.html'))
+            || (await caches.match('./offline.html'));
+        })
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Возвращаем из кеша, если есть
         if (response) {
-          console.log('Service Worker: Serving from cache', event.request.url);
           return response;
         }
 
-        console.log('Service Worker: Fetching from network', event.request.url);
-        
-        // Если нет в кеше, запрашиваем из сети
         return fetch(event.request)
           .then((response) => {
-            // Проверяем валидность ответа
             if (!response || response.status !== 200 || response.type !== 'basic') {
               return response;
             }
 
-            // Клонируем ответ для кеширования
             const responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-                console.log('Service Worker: Cached new resource', event.request.url);
-              });
-
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
             return response;
           })
-          .catch((error) => {
-            console.error('Service Worker: Fetch failed', error);
-            
-            // Если это HTML страница и сеть недоступна, возвращаем офлайн страницу
-            if (event.request.headers.get('accept').includes('text/html')) {
-              return caches.match('/index.html');
+          .catch(async (error) => {
+            if ((event.request.headers.get('accept') || '').includes('text/html')) {
+              return (await caches.match('./index.html')) || (await caches.match('./offline.html'));
             }
-            
             throw error;
           });
       })
@@ -141,8 +131,14 @@ self.addEventListener('fetch', (event) => {
 
 // Обработка сообщений от клиента
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+  if (!event.data) return;
+  if (event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
+  }
+  if (event.data.type === 'CLEAR_CACHES') {
+    event.waitUntil(
+      caches.keys().then((cacheNames) => Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName))))
+    );
   }
 });
 
