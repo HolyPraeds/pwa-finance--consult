@@ -263,7 +263,21 @@
         
         let deferredPrompt = null;
         const LIVE_CARD_URL = 'https://holypraeds.github.io/pwa-finance--consult/?v=20260916';
-        const CONTACT_VCARD_URL = 'lyubov-kachanova.vcf';
+        const LIVE_VCF_URL = 'https://holypraeds.github.io/pwa-finance--consult/lyubov-kachanova.vcf';
+        const CONTACT_VCARD = [
+            'BEGIN:VCARD',
+            'VERSION:3.0',
+            'FN:Lyubov Kachanova',
+            'N:Kachanova;Lyubov;;;',
+            'ORG:Lumen Libra',
+            'TITLE:Strategic Finance | Accounting | Financial Systems',
+            'TEL;TYPE=CELL,VOICE:+37126041555',
+            'EMAIL;TYPE=INTERNET,WORK:lyubov@lumenlibra.com',
+            'URL:https://lumenlibra.com',
+            'URL:https://www.linkedin.com/in/lyubovkachanova/',
+            'NOTE:Bringing structure to financial chaos',
+            'END:VCARD'
+        ].join('\r\n');
 
         function isStandaloneApp() {
             return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -293,37 +307,38 @@
                 'S.company=' + encodeURIComponent('Lumen Libra'),
                 'S.job_title=' + encodeURIComponent('Strategic Finance | Accounting | Financial Systems'),
                 'S.notes=' + encodeURIComponent('https://lumenlibra.com'),
+                'S.browser_fallback_url=' + encodeURIComponent(LIVE_VCF_URL),
                 'end'
             ].join(';');
         }
 
-        async function addContactToPhone(event) {
+        function contactFileForShare() {
+            if (!navigator.canShare) return null;
+            const types = ['text/vcard', 'text/x-vcard'];
+            for (let i = 0; i < types.length; i++) {
+                const file = new File([CONTACT_VCARD], 'Lyubov Kachanova.vcf', { type: types[i] });
+                try {
+                    if (navigator.canShare({ files: [file] })) return file;
+                } catch (err) {}
+            }
+            return null;
+        }
+
+        function addContactToPhone(event) {
             if (isApplePhone()) return;
+            if (!isAndroidPhone()) return;
 
-            event.preventDefault();
-
-            try {
-                const response = await fetch(CONTACT_VCARD_URL, { cache: 'no-store' });
-                const text = await response.text();
-                const file = new File([text], 'Lyubov Kachanova.vcf', { type: 'text/vcard' });
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Lyubov Kachanova',
-                        text: 'Lyubov Kachanova — Lumen Libra'
-                    });
-                    return;
-                }
-            } catch (err) {
-                if (err && err.name === 'AbortError') return;
+            const file = contactFileForShare();
+            if (file) {
+                event.preventDefault();
+                navigator.share({
+                    files: [file],
+                    title: 'Lyubov Kachanova'
+                }).catch(function (err) {
+                    if (err && err.name === 'AbortError') return;
+                    window.location.href = androidAddContactIntent();
+                });
             }
-
-            if (isAndroidPhone()) {
-                window.location.href = androidAddContactIntent();
-                return;
-            }
-
-            window.location.href = CONTACT_VCARD_URL;
         }
 
         function showShareStatus(text) {
@@ -406,6 +421,9 @@
             }
             const addContactBtn = document.getElementById('add-contact-btn');
             if (addContactBtn) {
+                if (isAndroidPhone()) {
+                    addContactBtn.href = androidAddContactIntent();
+                }
                 addContactBtn.addEventListener('click', addContactToPhone);
             }
         });
